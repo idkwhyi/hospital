@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 
 const PaymentForm = ({ bill, onProcessPayment, onCancel }) => {
@@ -43,12 +42,11 @@ const PaymentForm = ({ bill, onProcessPayment, onCancel }) => {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Payment Amount ($)</label>
                             <input
                                 type="number"
-                                required
                                 min="0.01"
                                 max={balance}
                                 step="0.01"
@@ -61,7 +59,6 @@ const PaymentForm = ({ bill, onProcessPayment, onCancel }) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
                             <select
-                                required
                                 value={paymentData.method}
                                 onChange={(e) => setPaymentData({ ...paymentData, method: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -89,7 +86,6 @@ const PaymentForm = ({ bill, onProcessPayment, onCancel }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Payment Date</label>
                             <input
                                 type="date"
-                                required
                                 value={paymentData.date}
                                 onChange={(e) => setPaymentData({ ...paymentData, date: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -98,20 +94,19 @@ const PaymentForm = ({ bill, onProcessPayment, onCancel }) => {
 
                         <div className="flex space-x-3 pt-4">
                             <button
-                                type="submit"
+                                onClick={handleSubmit}
                                 className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
                             >
                                 Process Payment
                             </button>
                             <button
-                                type="button"
                                 onClick={onCancel}
                                 className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-400 transition-colors"
                             >
                                 Cancel
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

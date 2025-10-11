@@ -1,6 +1,6 @@
-'use client'
+"use client"
 import { useState } from 'react'
-import BillForm from '@/app/components/form/BillForm'
+import BillForm from '../components/form/BillForm'
 import PaymentForm from '../components/form/PaymentForm'
 
 export default function page() {
@@ -43,16 +43,29 @@ export default function page() {
             status: 'Pending',
             paymentMethod: '-',
             services: ['Surgery', 'Hospital Stay']
+        },
+        {
+            id: 4,
+            patientName: 'Sarah Brown',
+            patientId: 'P004',
+            doctorName: 'Dr. Sarah Johnson',
+            billDate: '2024-01-17',
+            dueDate: '2024-02-17',
+            amount: 320,
+            paidAmount: 320,
+            status: 'Paid',
+            paymentMethod: 'Cash',
+            services: ['Consultation', 'ECG']
         }
     ])
 
     const [showAddForm, setShowAddForm] = useState(false)
     const [editingBill, setEditingBill] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
+    const [statusFilter, setStatusFilter] = useState('All Status')
     const [showPaymentModal, setShowPaymentModal] = useState(false)
     const [selectedBill, setSelectedBill] = useState(null)
 
-    // Stats data untuk billing
     const stats = [
         {
             title: 'Total Revenue',
@@ -100,18 +113,24 @@ export default function page() {
         },
     ]
 
-    const filteredBills = bills.filter(bill =>
-        bill.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        bill.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        bill.doctorName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const filteredBills = bills.filter(bill => {
+        const matchesSearch = bill.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            bill.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            bill.doctorName.toLowerCase().includes(searchTerm.toLowerCase())
+        
+        const matchesStatus = statusFilter === 'All Status' || bill.status === statusFilter
+        
+        return matchesSearch && matchesStatus
+    })
 
     const handleAddBill = (newBill) => {
         const bill = {
             id: bills.length + 1,
             ...newBill,
             paidAmount: 0,
-            status: 'Pending'
+            status: 'Pending',
+            paymentMethod: '-',
+            services: []
         }
         setBills([...bills, bill])
         setShowAddForm(false)
@@ -146,6 +165,11 @@ export default function page() {
         }))
         setShowPaymentModal(false)
         setSelectedBill(null)
+    }
+
+    const handlePaymentClick = (bill) => {
+        setSelectedBill(bill)
+        setShowPaymentModal(true)
     }
 
     const getStatusColor = (status) => {
@@ -222,7 +246,11 @@ export default function page() {
                         </div>
                     </div>
                     <div className="flex space-x-3">
-                        <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select 
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
                             <option>All Status</option>
                             <option>Paid</option>
                             <option>Partial</option>
@@ -299,12 +327,8 @@ export default function page() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div className="flex space-x-2">
                                                 <button
-                                                    onClick={() => {
-                                                        console.log("Billing")
-                                                        setSelectedBill(bill)
-                                                        setShowPaymentModal(true)
-                                                    }}
-                                                    className="text-green-600 hover:text-green-900 transition-colors"
+                                                    onClick={() => handlePaymentClick(bill)}
+                                                    className="text-green-600 hover:text-green-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     disabled={bill.status === 'Paid'}
                                                 >
                                                     Payment
@@ -341,7 +365,7 @@ export default function page() {
                 )}
             </div>
 
-            {/* Add/Edit Bill Form Modal */}
+            {/* Modals */}
             {(showAddForm || editingBill) && (
                 <BillForm
                     bill={editingBill}
@@ -353,7 +377,6 @@ export default function page() {
                 />
             )}
 
-            {/* Payment Modal */}
             {showPaymentModal && selectedBill && (
                 <PaymentForm
                     bill={selectedBill}
