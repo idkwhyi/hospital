@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import AppointmentForm from '../components/form/AppointmentForm'
+import AppointmentForm from '@/app/components/form/AppointmentForm'
 
 export default function page() {
     const [appointments, setAppointments] = useState([

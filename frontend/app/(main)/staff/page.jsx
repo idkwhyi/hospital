@@ -1,65 +1,62 @@
 'use client'
 import { useState } from 'react'
-import PatientForm from '../components/form/PatientForm'
+import StaffForm from '@/app/components/form/StaffForm'
 
 export default function page() {
-    const [patients, setPatients] = useState([
+    const [staff, setStaff] = useState([
         {
             id: 1,
-            name: 'John Doe',
-            email: 'john.doe@email.com',
-            phone: '+1 (555) 123-4567',
-            age: 45,
-            gender: 'Male',
-            bloodType: 'A+',
-            lastVisit: '2024-01-15',
+            name: 'Robert Brown',
+            email: 'robert.b@hospital.com',
+            phone: '+1 (555) 456-7890',
+            role: 'Receptionist',
+            department: 'Front Desk',
+            joinDate: '2022-03-15',
             status: 'Active'
         },
         {
             id: 2,
-            name: 'Jane Smith',
-            email: 'jane.smith@email.com',
-            phone: '+1 (555) 234-5678',
-            age: 32,
-            gender: 'Female',
-            bloodType: 'O-',
-            lastVisit: '2024-01-10',
+            name: 'Lisa Wang',
+            email: 'lisa.w@hospital.com',
+            phone: '+1 (555) 567-8901',
+            role: 'Nurse',
+            department: 'Emergency',
+            joinDate: '2021-08-22',
             status: 'Active'
         },
         {
             id: 3,
-            name: 'Mike Wilson',
-            email: 'mike.wilson@email.com',
-            phone: '+1 (555) 345-6789',
-            age: 58,
-            gender: 'Male',
-            bloodType: 'B+',
-            lastVisit: '2023-12-20',
-            status: 'Inactive'
+            name: 'David Kim',
+            email: 'david.k@hospital.com',
+            phone: '+1 (555) 678-9012',
+            role: 'Lab Technician',
+            department: 'Laboratory',
+            joinDate: '2023-01-10',
+            status: 'On Leave'
         }
     ])
 
     const [showAddForm, setShowAddForm] = useState(false)
-    const [editingPatient, setEditingPatient] = useState(null)
+    const [editingStaff, setEditingStaff] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
 
-    // Stats data untuk patients
+    // Stats data untuk staff
     const stats = [
         {
-            title: 'Total Patients',
-            value: patients.length.toString(),
-            change: '+5',
+            title: 'Total Staff',
+            value: staff.length.toString(),
+            change: '+3',
             trend: 'up',
             icon: (
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
             ),
         },
         {
-            title: 'Active Patients',
-            value: patients.filter(p => p.status === 'Active').length.toString(),
-            change: '+3',
+            title: 'Active Staff',
+            value: staff.filter(s => s.status === 'Active').length.toString(),
+            change: '+2',
             trend: 'up',
             icon: (
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,52 +65,53 @@ export default function page() {
             ),
         },
         {
-            title: 'Avg. Age',
-            value: Math.round(patients.reduce((acc, p) => acc + p.age, 0) / patients.length).toString(),
-            change: '-2',
-            trend: 'down',
+            title: 'Departments',
+            value: new Set(staff.map(s => s.department)).size.toString(),
+            change: '+1',
+            trend: 'up',
             icon: (
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
             ),
         },
         {
-            title: 'This Month',
-            value: '24',
-            change: '+12%',
+            title: 'Avg. Tenure',
+            value: '1.8 yrs',
+            change: '+0.2',
             trend: 'up',
             icon: (
                 <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             ),
         },
     ]
 
-    const filteredPatients = patients.filter(patient =>
-        patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.phone.includes(searchTerm)
+    const filteredStaff = staff.filter(staffMember =>
+        staffMember.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staffMember.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staffMember.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staffMember.department.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    const handleAddPatient = (newPatient) => {
-        const patient = {
-            id: patients.length + 1,
-            ...newPatient
+    const handleAddStaff = (newStaff) => {
+        const staffMember = {
+            id: staff.length + 1,
+            ...newStaff
         }
-        setPatients([...patients, patient])
+        setStaff([...staff, staffMember])
         setShowAddForm(false)
     }
 
-    const handleEditPatient = (updatedPatient) => {
-        setPatients(patients.map(p => p.id === updatedPatient.id ? updatedPatient : p))
-        setEditingPatient(null)
+    const handleEditStaff = (updatedStaff) => {
+        setStaff(staff.map(s => s.id === updatedStaff.id ? updatedStaff : s))
+        setEditingStaff(null)
     }
 
-    const handleDeletePatient = (id) => {
-        if (confirm('Are you sure you want to delete this patient?')) {
-            setPatients(patients.filter(p => p.id !== id))
+    const handleDeleteStaff = (id) => {
+        if (confirm('Are you sure you want to delete this staff member?')) {
+            setStaff(staff.filter(s => s.id !== id))
         }
     }
 
@@ -122,8 +120,8 @@ export default function page() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Patients Management</h1>
-                    <p className="text-gray-600">Manage patient records and information</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
+                    <p className="text-gray-600">Manage hospital staff and personnel</p>
                 </div>
                 <button
                     onClick={() => setShowAddForm(true)}
@@ -132,7 +130,7 @@ export default function page() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    <span>Add Patient</span>
+                    <span>Add Staff</span>
                 </button>
             </div>
 
@@ -168,7 +166,7 @@ export default function page() {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search patients by name, email, or phone..."
+                                placeholder="Search staff by name, role, or department..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -177,83 +175,84 @@ export default function page() {
                     </div>
                     <div className="flex space-x-3">
                         <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option>All Status</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
+                            <option>All Roles</option>
+                            <option>Receptionist</option>
+                            <option>Nurse</option>
+                            <option>Lab Technician</option>
+                            <option>Administrator</option>
                         </select>
                         <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option>All Gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>On Leave</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            {/* Patients Table */}
+            {/* Staff Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Staff Member</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age/Gender</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Type</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Visit</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredPatients.map((patient) => (
-                                <tr key={patient.id} className="hover:bg-gray-50 transition-colors">
+                            {filteredStaff.map((staffMember) => (
+                                <tr key={staffMember.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                                <span className="text-green-600 font-semibold text-sm">
-                                                    {patient.name.split(' ').map(n => n[0]).join('')}
+                                            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                                                <span className="text-indigo-600 font-semibold text-sm">
+                                                    {staffMember.name.split(' ').map(n => n[0]).join('')}
                                                 </span>
                                             </div>
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                                                <div className="text-sm text-gray-500">{patient.email}</div>
+                                                <div className="text-sm font-medium text-gray-900">{staffMember.name}</div>
+                                                <div className="text-sm text-gray-500">{staffMember.email}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{patient.phone}</div>
+                                        <div className="text-sm text-gray-900">{staffMember.phone}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{patient.age} years</div>
-                                        <div className="text-sm text-gray-500">{patient.gender}</div>
+                                        <div className="text-sm text-gray-900">{staffMember.role}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className="inline-flex px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">
-                                            {patient.bloodType}
+                                        <span className="inline-flex px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">
+                                            {staffMember.department}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{patient.lastVisit}</div>
+                                        <div className="text-sm text-gray-900">{staffMember.joinDate}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${patient.status === 'Active'
+                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${staffMember.status === 'Active'
                                                 ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-800'
+                                                : 'bg-yellow-100 text-yellow-800'
                                             }`}>
-                                            {patient.status}
+                                            {staffMember.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">
                                             <button
-                                                onClick={() => setEditingPatient(patient)}
+                                                onClick={() => setEditingStaff(staffMember)}
                                                 className="text-blue-600 hover:text-blue-900 transition-colors"
                                             >
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDeletePatient(patient.id)}
+                                                onClick={() => handleDeleteStaff(staffMember.id)}
                                                 className="text-red-600 hover:text-red-900 transition-colors"
                                             >
                                                 Delete
@@ -266,25 +265,25 @@ export default function page() {
                     </table>
                 </div>
 
-                {filteredPatients.length === 0 && (
+                {filteredStaff.length === 0 && (
                     <div className="text-center py-12">
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No patients found</h3>
+                        <h3 className="mt-2 text-sm font-medium text-gray-900">No staff members found</h3>
                         <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter</p>
                     </div>
                 )}
             </div>
 
-            {/* Add/Edit Patient Form Modal */}
-            {(showAddForm || editingPatient) && (
-                <PatientForm
-                    patient={editingPatient}
-                    onSave={editingPatient ? handleEditPatient : handleAddPatient}
+            {/* Add/Edit Staff Form Modal */}
+            {(showAddForm || editingStaff) && (
+                <StaffForm
+                    staff={editingStaff}
+                    onSave={editingStaff ? handleEditStaff : handleAddStaff}
                     onCancel={() => {
                         setShowAddForm(false)
-                        setEditingPatient(null)
+                        setEditingStaff(null)
                     }}
                 />
             )}

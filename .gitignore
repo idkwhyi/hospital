@@ -1,0 +1,98 @@
+# ===============================
+# Global (macOS)
+# ===============================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===============================
+# Node / Next.js (frontend)
+# ===============================
+frontend/node_modules/
+frontend/.next/
+frontend/.turbo/
+frontend/.vercel/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+frontend/.env.test.local
+frontend/.eslintcache
+frontend/out/
+frontend/dist/
+
+# Optional: log and cache files
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/.pnpm-store/
+frontend/.parcel-cache/
+frontend/.swc/
+frontend/.vscode/
+
+# ===============================
+# Python / FastAPI (backend)
+# ===============================
+backend/__pycache__/
+backend/*.py[cod]
+backend/*.pyo
+backend/.Python
+backend/env/
+backend/venv/
+backend/.venv/
+backend/ENV/
+backend/env.bak/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.coverage
+backend/.idea/
+backend/.vscode/
+
+# Virtual environment or compiled artifacts
+backend/*.egg-info/
+backend/*.egg
+backend/dist/
+backend/build/
+backend/.tox/
+backend/.nox/
+backend/.env
+backend/.env.local
+backend/.env.test
+backend/.env.production
+
+# ===============================
+# Global (Logs, Misc)
+# ===============================
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+
+# ===============================
+# IDE / Editors
+# ===============================
+.vscode/
+.idea/
+*.code-workspace
+
+# ===============================
+# OS / Backup
+# ===============================
+*.bak
+*.tmp
+*.swp
+*.swo
+*.orig

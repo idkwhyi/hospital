@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
-import BillForm from '../components/form/BillForm'
-import PaymentForm from '../components/form/PaymentForm'
+import BillForm from '@/app/components/form/BillForm'
+import PaymentForm from '@/app/components/form/PaymentForm'
 
 export default function page() {
     const [bills, setBills] = useState([

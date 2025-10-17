@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import DoctorForm from '../components/form/DoctorForm'
+import DoctorForm from '@/app/components/form/DoctorForm'
 
 export default function page() {
     const [doctors, setDoctors] = useState([
