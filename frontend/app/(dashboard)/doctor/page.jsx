@@ -1,47 +1,57 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DoctorForm from '@/app/components/form/DoctorForm'
 
-export default function page() {
-    const [doctors, setDoctors] = useState([
-        {
-            id: 1,
-            name: 'Dr. Sarah Johnson',
-            specialization: 'Cardiology',
-            email: 'sarah.j@hospital.com',
-            phone: '+1 (555) 123-4567',
-            status: 'Active',
-            schedule: 'Mon, Wed, Fri: 9AM-5PM',
-            consultationFee: '$150',
-            experience: '8 years'
-        },
-        {
-            id: 2,
-            name: 'Dr. Michael Chen',
-            specialization: 'Neurology',
-            email: 'michael.c@hospital.com',
-            phone: '+1 (555) 234-5678',
-            status: 'Active',
-            schedule: 'Tue, Thu: 10AM-6PM',
-            consultationFee: '$180',
-            experience: '12 years'
-        },
-        {
-            id: 3,
-            name: 'Dr. Emily Rodriguez',
-            specialization: 'Pediatrics',
-            email: 'emily.r@hospital.com',
-            phone: '+1 (555) 345-6789',
-            status: 'On Leave',
-            schedule: 'Mon-Fri: 8AM-4PM',
-            consultationFee: '$120',
-            experience: '6 years'
-        }
-    ])
+// API Base URL - sesuaikan dengan backend Anda
+const API_BASE_URL = 'http://localhost:8000'
 
+export default function Page() {
+    const [doctors, setDoctors] = useState([])
+    const [loading, setLoading] = useState(true)
     const [showAddForm, setShowAddForm] = useState(false)
     const [editingDoctor, setEditingDoctor] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
+    const [error, setError] = useState(null)
+
+    // Get token from cookies
+    const getAuthToken = () => {
+        const cookies = document.cookie.split(';')
+        const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('access_token='))
+        return tokenCookie ? tokenCookie.split('=')[1] : null
+    }
+
+    // Fetch doctors from API
+    const fetchDoctors = async () => {
+        try {
+            setLoading(true)
+            const response = await fetch(`${API_BASE_URL}/users/`, {
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch doctors')
+            }
+
+            const data = await response.json()
+            // Filter only doctors if your API returns all users
+            const doctorUsers = data.filter(user => user.role === 'doctor')
+            setDoctors(doctorUsers)
+            setError(null)
+        } catch (err) {
+            setError(err.message)
+            console.error('Error fetching doctors:', err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Load doctors on component mount
+    useEffect(() => {
+        fetchDoctors()
+    }, [])
 
     // Stats data untuk doctors
     const stats = [
@@ -57,8 +67,8 @@ export default function page() {
             ),
         },
         {
-            title: 'Active Doctors',
-            value: doctors.filter(d => d.status === 'Active').length.toString(),
+            title: 'Active Accounts',
+            value: doctors.length.toString(),
             change: '+1',
             trend: 'up',
             icon: (
@@ -68,62 +78,147 @@ export default function page() {
             ),
         },
         {
-            title: 'Specializations',
-            value: new Set(doctors.map(d => d.specialization)).size.toString(),
+            title: 'Password Changed',
+            value: '3',
             change: '+1',
             trend: 'up',
             icon: (
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
             ),
-        },
-        {
-            title: 'Avg. Fee',
-            value: '$150',
-            change: '+5%',
-            trend: 'up',
-            icon: (
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-            ),
-        },
+        }
     ]
 
     const filteredDoctors = doctors.filter(doctor =>
-        doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.email.toLowerCase().includes(searchTerm.toLowerCase())
+        doctor.username.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    const handleAddDoctor = (newDoctor) => {
-        const doctor = {
-            id: doctors.length + 1,
-            ...newDoctor
+    // CREATE: Add new doctor
+    const handleAddDoctor = async (newDoctor) => {
+
+        console.log("doctor: ", newDoctor)
+        console.log("token: ", getAuthToken())
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: newDoctor.name,
+                    password: newDoctor.password,
+                    role: 'doctor',
+                    branch: 'center'
+                })
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.detail || 'Failed to create doctor')
+            }
+
+            const createdDoctor = await response.json()
+            setDoctors([...doctors, createdDoctor])
+            setShowAddForm(false)
+            alert('Doctor account created successfully!')
+        } catch (err) {
+            alert(`Error: ${err.message}`)
+            console.error('Error creating doctor:', err)
         }
-        setDoctors([...doctors, doctor])
-        setShowAddForm(false)
     }
 
-    const handleEditDoctor = (updatedDoctor) => {
-        setDoctors(doctors.map(d => d.id === updatedDoctor.id ? updatedDoctor : d))
-        setEditingDoctor(null)
+    // UPDATE: Edit doctor - Note: Your API doesn't have PUT endpoint yet
+    const handleEditDoctor = async (updatedDoctor) => {
+        try {
+            // Anda perlu menambahkan PUT endpoint di backend
+            const response = await fetch(`${API_BASE_URL}/users/${updatedDoctor.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: updatedDoctor.username,
+                    password: updatedDoctor.password,
+                    role: 'doctor'
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to update doctor')
+            }
+
+            const updated = await response.json()
+            setDoctors(doctors.map(d => d.id === updated.id ? updated : d))
+            setEditingDoctor(null)
+            alert('Doctor account updated successfully!')
+        } catch (err) {
+            alert(`Error: ${err.message}. Note: PUT endpoint may not exist in your API yet.`)
+            console.error('Error updating doctor:', err)
+        }
     }
 
-    const handleDeleteDoctor = (id) => {
-        if (confirm('Are you sure you want to delete this doctor?')) {
+    // DELETE: Delete doctor
+    const handleDeleteDoctor = async (id) => {
+        if (!confirm('Are you sure you want to delete this doctor account?')) {
+            return
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.detail || 'Failed to delete doctor')
+            }
+
             setDoctors(doctors.filter(d => d.id !== id))
+            alert('Doctor account deleted successfully!')
+        } catch (err) {
+            alert(`Error: ${err.message}`)
+            console.error('Error deleting doctor:', err)
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading doctors...</p>
+                </div>
+            </div>
+        )
     }
 
     return (
         <div className="space-y-6">
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <p className="font-medium">Error: {error}</p>
+                    <button
+                        onClick={fetchDoctors}
+                        className="text-sm underline mt-1"
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Doctors Management</h1>
-                    <p className="text-gray-600">Manage doctor profiles</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Doctors Account Management</h1>
+                    <p className="text-gray-600">Manage doctor login accounts</p>
                 </div>
                 <button
                     onClick={() => setShowAddForm(true)}
@@ -132,12 +227,12 @@ export default function page() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    <span>Add Doctor</span>
+                    <span>Add Doctor Account</span>
                 </button>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {stats.map((stat, index) => (
                     <div key={index} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center justify-between">
@@ -156,7 +251,7 @@ export default function page() {
                 ))}
             </div>
 
-            {/* Search and Filter */}
+            {/* Search */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                     <div className="flex-1 w-full sm:max-w-md">
@@ -168,26 +263,13 @@ export default function page() {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search doctors..."
+                                placeholder="Search doctors by username..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                     </div>
-                    {/* <div className="flex space-x-3">
-                        <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option>All Status</option>
-                            <option>Active</option>
-                            <option>On Leave</option>
-                        </select>
-                        <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option>All Specializations</option>
-                            <option>Cardiology</option>
-                            <option>Neurology</option>
-                            <option>Pediatrics</option>
-                        </select>
-                    </div> */}
                 </div>
             </div>
 
@@ -197,37 +279,43 @@ export default function page() {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> 
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {filteredDoctors.map((doctor) => (
                                 <tr key={doctor.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-6 py-4">
                                         <div className="flex items-center">
                                             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                                 <span className="text-blue-600 font-semibold text-sm">
-                                                    {doctor.name.split(' ').map(n => n[0]).join('')}
+                                                    {doctor.username.charAt(0).toUpperCase()}
                                                 </span>
                                             </div>
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
-                                                {/* <div className="text-sm text-gray-500">{doctor.experience}</div> */}
+                                                <div className="text-sm font-medium text-gray-900">{doctor.username}</div>
+                                                <div className="text-sm text-gray-500">ID: {doctor.id}</div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                            {doctor.role}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => setEditingDoctor(doctor)}
-                                                className="text-blue-600 hover:text-blue-900 transition-colors"
+                                                className="text-blue-600 hover:text-blue-900 transition-colors px-3 py-1 rounded border border-blue-200 hover:bg-blue-50"
                                             >
                                                 Edit
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteDoctor(doctor.id)}
-                                                className="text-red-600 hover:text-red-900 transition-colors"
+                                                className="text-red-600 hover:text-red-900 transition-colors px-3 py-1 rounded border border-red-200 hover:bg-red-50"
                                             >
                                                 Delete
                                             </button>
@@ -244,8 +332,8 @@ export default function page() {
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No doctors found</h3>
-                        <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter</p>
+                        <h3 className="mt-2 text-sm font-medium text-gray-900">No doctor accounts found</h3>
+                        <p className="mt-1 text-sm text-gray-500">Try adjusting your search term</p>
                     </div>
                 )}
             </div>
@@ -264,4 +352,3 @@ export default function page() {
         </div>
     )
 }
-
