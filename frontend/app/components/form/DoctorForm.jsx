@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 
-const DoctorForm = ({ doctor, onSave, onCancel }) => {
+const DoctorForm = ({ formMode, doctor, onSave, onCancel }) => {
     const [formData, setFormData] = useState(doctor || {
         name: '',
         password: '',
@@ -44,6 +44,34 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 placeholder="Masukkan password"
                             />
                         </div>
+
+                        {formMode == 'edit' && (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.role}
+                                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Masukkan role"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.branch}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Pilih cabang"
+                                    />
+                                </div>
+                            </>
+                        )}
 
                         <div className="flex space-x-3 pt-4">
                             <button

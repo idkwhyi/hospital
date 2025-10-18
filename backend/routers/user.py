@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 import models, schemas, crud
 from auth import get_current_user,require_role
 from database import get_db
-from crud import hash_password
+from crud import hash_password, get_all_users
 
 router = APIRouter(
   prefix="/users",
@@ -31,12 +31,13 @@ def create_user(
     )
   return crud.create_user(db, user_data)
   
-@router.get("/",response_model=list[schemas.UserOut])
+@router.get("/", response_model=list[schemas.UserOut])
 def list_users(
+  role: str | None = Query(None, description="Filter berdasarkan role user"),
   db: Session = Depends(get_db),
   current_user = Depends(require_role(['admin']))
 ):
-  users = crud.get_all_users(db)
+  users = crud.get_all_users(db, role=role)
   return users
 
 @router.delete("/{user_id}",status_code=status.HTTP_204_NO_CONTENT)

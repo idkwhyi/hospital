@@ -21,8 +21,12 @@ def create_user(db:Session, user:schemas.UserCreate):
 def get_user(db: Session, username: str):
   return db.query(models.User).filter(models.User.username == username).first()
 
-def get_all_users(db: Session):
-  return db.query(models.User).all()
+def get_all_users(db: Session, role: str | None = None):
+    query = db.query(models.User)
+    if role:
+        query = query.filter(models.User.role == role)
+    return query.all()
+
 
 def delete_user(db: Session, user_id: int):
   user = db.query(models.User).filter(models.User.id == user_id).first()

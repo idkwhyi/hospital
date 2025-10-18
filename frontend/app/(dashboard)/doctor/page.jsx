@@ -23,30 +23,34 @@ export default function Page() {
     // Fetch doctors from API
     const fetchDoctors = async () => {
         try {
-            setLoading(true)
-            const response = await fetch(`${API_BASE_URL}/users/`, {
+            setLoading(true);
+            const response = await fetch(`${API_BASE_URL}/users/?role=doctor`, {
+                method: 'GET', // <-- pindahkan ke sini
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // opsional, kalau pakai cookie-based auth
+            });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch doctors')
+                throw new Error('Failed to fetch doctors');
             }
 
-            const data = await response.json()
-            // Filter only doctors if your API returns all users
-            const doctorUsers = data.filter(user => user.role === 'doctor')
-            setDoctors(doctorUsers)
-            setError(null)
+            const data = await response.json();
+
+            // API-mu sudah bisa filter berdasarkan role,
+            const doctorUsers = data.filter(user => user.role === 'doctor');
+            setDoctors(doctorUsers);
+            setError(null);
         } catch (err) {
-            setError(err.message)
-            console.error('Error fetching doctors:', err)
+            setError(err.message);
+            console.error('Error fetching doctors:', err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
 
     // Load doctors on component mount
     useEffect(() => {
@@ -341,6 +345,7 @@ export default function Page() {
             {/* Add/Edit Doctor Form Modal */}
             {(showAddForm || editingDoctor) && (
                 <DoctorForm
+                    formMode={editingDoctor ? 'edit' : 'add'}
                     doctor={editingDoctor}
                     onSave={editingDoctor ? handleEditDoctor : handleAddDoctor}
                     onCancel={() => {

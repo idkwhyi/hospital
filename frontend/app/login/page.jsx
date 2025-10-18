@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 
@@ -11,12 +11,18 @@ export default function page() {
     const router = useRouter()
 
     useEffect(() => {
-        // Check if user is already logged in
-        const token = localStorage.getItem('access_token')
-        if (token) {
-            router.push('/')
+        if (typeof window !== 'undefined') {
+            const token = Cookies.get('access_token')
+            if (token) {
+                router.push('/')
+            } else {
+                setLoading(false)
+            }
         }
     }, [router])
+
+    if (loading) return <div>Loading...</div>
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -49,7 +55,7 @@ export default function page() {
 
             // Simpan token & user di localStorage
             Cookies.set('access_token', data.access_token, { expires: 1 })
-            localStorage.setItem('access_token', data.access_token)
+            // localStorage.setItem('access_token', data.access_token)
             localStorage.setItem('user', JSON.stringify({
                 role: data.role,
                 branch: data.branch
