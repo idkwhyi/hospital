@@ -4,6 +4,7 @@ import { useState } from "react"
 const DoctorForm = ({ doctor, onSave, onCancel }) => {
     const [formData, setFormData] = useState(doctor || {
         name: '',
+        password: '',
         specialization: '',
         email: '',
         phone: '',
@@ -19,7 +20,7 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-transparent backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
                     <h2 className="text-xl font-bold text-gray-900 mb-4">
@@ -35,11 +36,26 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Dr. John Smith"
+                                placeholder="Masukkan nama dokter"
                             />
                         </div>
 
                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                required
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Masukkan password"
+                            />
+                        </div>
+
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
                             <select
                                 required
@@ -54,9 +70,9 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 <option value="Orthopedics">Orthopedics</option>
                                 <option value="Dermatology">Dermatology</option>
                             </select>
-                        </div>
+                        </div> */}
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                             <input
                                 type="email"
@@ -66,9 +82,9 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="doctor@hospital.com"
                             />
-                        </div>
+                        </div> */}
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                             <input
                                 type="tel"
@@ -78,9 +94,9 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="+1 (555) 123-4567"
                             />
-                        </div>
+                        </div> */}
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Schedule</label>
                             <input
                                 type="text"
@@ -90,9 +106,9 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Mon, Wed, Fri: 9AM-5PM"
                             />
-                        </div>
+                        </div> */}
 
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Consultation Fee</label>
                                 <input
@@ -115,9 +131,9 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                     placeholder="5 years"
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                             <select
                                 value={formData.status}
@@ -127,7 +143,7 @@ const DoctorForm = ({ doctor, onSave, onCancel }) => {
                                 <option value="Active">Active</option>
                                 <option value="On Leave">On Leave</option>
                             </select>
-                        </div>
+                        </div> */}
 
                         <div className="flex space-x-3 pt-4">
                             <button

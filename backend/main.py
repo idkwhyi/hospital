@@ -7,8 +7,17 @@ from auth import create_access_token, get_current_user, require_role, verify_tok
 from passlib.hash import argon2
 from fastapi.openapi.utils import get_openapi
 from routers import patient, user, appointment, medical_record, payment
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Clinic API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # frontend Next.js
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # for routing
 app.include_router(patient.router)
@@ -46,7 +55,7 @@ app.openapi = custom_openapi
 
 @app.post("/login/")
 def login(
-   user: schemas.UserCreate, db: Session = Depends(get_db)
+   user: schemas.UserLogin, db: Session = Depends(get_db)
    ):
   db_user = crud.get_user(db, user.username)
   if not db_user or not crud.verify_password(user.password, db_user.password_hash):

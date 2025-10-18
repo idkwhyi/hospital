@@ -65,8 +65,8 @@ export default function Sidebar() {
     ]
 
     const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
+        Cookies.remove('access_token')
+        localStorage.clear()
         router.push('/login')
     }
 
@@ -99,8 +99,8 @@ export default function Sidebar() {
                             key={item.name}
                             onClick={() => router.push(item.href)}
                             className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-200 ${isActive
-                                    ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-blue-50 text-blue-600 border border-blue-200'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             <div className={`flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>

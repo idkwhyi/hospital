@@ -123,7 +123,7 @@ export default function page() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Doctors Management</h1>
-                    <p className="text-gray-600">Manage doctor profiles, schedules, and information</p>
+                    <p className="text-gray-600">Manage doctor profiles</p>
                 </div>
                 <button
                     onClick={() => setShowAddForm(true)}
@@ -168,14 +168,14 @@ export default function page() {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search doctors by name, specialization, or email..."
+                                placeholder="Search doctors..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                     </div>
-                    <div className="flex space-x-3">
+                    {/* <div className="flex space-x-3">
                         <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option>All Status</option>
                             <option>Active</option>
@@ -187,7 +187,7 @@ export default function page() {
                             <option>Neurology</option>
                             <option>Pediatrics</option>
                         </select>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -198,12 +198,7 @@ export default function page() {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Specialization</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Schedule</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> 
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -218,30 +213,9 @@ export default function page() {
                                             </div>
                                             <div className="ml-4">
                                                 <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
-                                                <div className="text-sm text-gray-500">{doctor.experience}</div>
+                                                {/* <div className="text-sm text-gray-500">{doctor.experience}</div> */}
                                             </div>
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{doctor.specialization}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{doctor.email}</div>
-                                        <div className="text-sm text-gray-500">{doctor.phone}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{doctor.schedule}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-900">{doctor.consultationFee}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${doctor.status === 'Active'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'
-                                            }`}>
-                                            {doctor.status}
-                                        </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">

@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
 export default function page() {
     const [username, setUsername] = useState('')
@@ -9,27 +10,62 @@ export default function page() {
     const [error, setError] = useState('')
     const router = useRouter()
 
+    useEffect(() => {
+        // Check if user is already logged in
+        const token = localStorage.getItem('access_token')
+        if (token) {
+            router.push('/')
+        }
+    }, [router])
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         setError('')
 
         try {
-            // Simulasi login - ganti dengan API call sesungguhnya
-            if (username === 'admin' && password === 'password') {
-                // Login berhasil
-                localStorage.setItem('token', 'dummy-token')
-                localStorage.setItem('user', JSON.stringify({ username, role: 'admin' }))
-                router.push('/dashboard')
-            } else {
-                setError('Username atau password salah')
+            const res = await fetch('http://127.0.0.1:8000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
+            });
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    setError('Username atau password salah')
+                } else {
+                    setError('Gagal terhubung ke server')
+                }
+                return
             }
+
+            const data = await res.json()
+            console.log(data)
+
+            // Simpan token & user di localStorage
+            Cookies.set('access_token', data.access_token, { expires: 1 })
+            localStorage.setItem('access_token', data.access_token)
+            localStorage.setItem('user', JSON.stringify({
+                role: data.role,
+                branch: data.branch
+            }));
+
+
+            // Redirect ke dashboard
+            router.push('/')
         } catch (err) {
-            setError('Terjadi kesalahan saat login')
+            console.error(err)
+            setError('Terjadi kesalahan jaringan')
         } finally {
             setLoading(false)
         }
     }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 px-4 py-8 sm:px-6 lg:px-8">
@@ -83,8 +119,7 @@ export default function page() {
                                     onChange={(e) => setUsername(e.target.value)}
                                     disabled={loading}
                                     className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:bg-gray-50 disabled:cursor-not-allowed bg-gray-50 focus:bg-white text-black"
-                                    placeholder="Masukkan username"
-                                />
+                                    placeholder="Masukkan username" />
                             </div>
                         </div>
 
