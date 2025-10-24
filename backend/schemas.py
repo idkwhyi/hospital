@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class UserLogin(BaseModel):
   username: str
@@ -10,6 +11,11 @@ class UserCreate(BaseModel):
   password: str
   role: str
   branch: str
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    password: Optional[str] = None
+    branch: Optional[str] = None
 
 class UserOut(BaseModel):
   id: int

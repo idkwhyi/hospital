@@ -27,14 +27,36 @@ def get_all_users(db: Session, role: str | None = None):
         query = query.filter(models.User.role == role)
     return query.all()
 
+def update_user(db: Session, user_id: int, user_data: schemas.UserUpdate):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    
+    if not user:
+        return None
+    
+    if user_data.password is not None and user_data.password.strip() != "":
+        user.password = hash_password(user_data.password)
+    
+    if user_data.role is not None:
+        user.role = user_data.role
+    
+    if user_data.branch is not None:
+        user.branch = user_data.branch
+    
+    db.commit()
+    db.refresh(user)
+    
+    return user
 
 def delete_user(db: Session, user_id: int):
-  user = db.query(models.User).filter(models.User.id == user_id).first()
-  if not user:
-    return None
-  db.delete(user)
-  db.commit()
-  return user
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not user:
+        return None
+
+    db.delete(user)
+    db.commit()
+
+    return user
 
 def create_patient(db: Session, patient: schemas.PatientCreate):
   db_patient = models.Patient(**patient.dict())

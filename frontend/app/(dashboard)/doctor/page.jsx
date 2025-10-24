@@ -57,7 +57,6 @@ export default function Page() {
         fetchDoctors()
     }, [])
 
-    // Stats data untuk doctors
     const stats = [
         {
             title: 'Total Doctors',
@@ -98,9 +97,7 @@ export default function Page() {
         doctor.username.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    // CREATE: Add new doctor
     const handleAddDoctor = async (newDoctor) => {
-
         console.log("doctor: ", newDoctor)
         console.log("token: ", getAuthToken())
         try {
@@ -111,10 +108,10 @@ export default function Page() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: newDoctor.name,
+                    username: newDoctor.username,  // <- Changed from newDoctor.name
                     password: newDoctor.password,
                     role: 'doctor',
-                    branch: 'center'
+                    branch: newDoctor.branch  // <- Added branch
                 })
             })
 
@@ -133,25 +130,30 @@ export default function Page() {
         }
     }
 
-    // UPDATE: Edit doctor - Note: Your API doesn't have PUT endpoint yet
     const handleEditDoctor = async (updatedDoctor) => {
         try {
-            // Anda perlu menambahkan PUT endpoint di backend
+            const payload = {
+                role: 'doctor',
+                branch: updatedDoctor.branch
+            }
+
+            // Only include password if it's not empty
+            if (updatedDoctor.password && updatedDoctor.password.trim() !== '') {
+                payload.password = updatedDoctor.password
+            }
+
             const response = await fetch(`${API_BASE_URL}/users/${updatedDoctor.id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${getAuthToken()}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    username: updatedDoctor.username,
-                    password: updatedDoctor.password,
-                    role: 'doctor'
-                })
+                body: JSON.stringify(payload)
             })
 
             if (!response.ok) {
-                throw new Error('Failed to update doctor')
+                const errorData = await response.json()
+                throw new Error(errorData.detail || 'Failed to update doctor')
             }
 
             const updated = await response.json()
@@ -159,7 +161,7 @@ export default function Page() {
             setEditingDoctor(null)
             alert('Doctor account updated successfully!')
         } catch (err) {
-            alert(`Error: ${err.message}. Note: PUT endpoint may not exist in your API yet.`)
+            alert(`Error: ${err.message}`)
             console.error('Error updating doctor:', err)
         }
     }
@@ -284,6 +286,7 @@ export default function Page() {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -303,6 +306,14 @@ export default function Page() {
                                                 <div className="text-sm text-gray-500">ID: {doctor.id}</div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                                            {doctor.branch === 'central' ? 'Central' :
+                                                doctor.branch === 'branch_a' ? 'Branch A' :
+                                                    doctor.branch === 'branch_b' ? 'Branch B' :
+                                                        doctor.branch}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
@@ -345,7 +356,6 @@ export default function Page() {
             {/* Add/Edit Doctor Form Modal */}
             {(showAddForm || editingDoctor) && (
                 <DoctorForm
-                    formMode={editingDoctor ? 'edit' : 'add'}
                     doctor={editingDoctor}
                     onSave={editingDoctor ? handleEditDoctor : handleAddDoctor}
                     onCancel={() => {
