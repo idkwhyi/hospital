@@ -60,7 +60,8 @@ def update_user(
 @router.delete("/{user_id}",status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(
     user_id: int,
-    db: Session = Depends(require_role(['admin']))
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_role(['admin']))
 ):
     deleted = crud.delete_user(db, user_id)
     

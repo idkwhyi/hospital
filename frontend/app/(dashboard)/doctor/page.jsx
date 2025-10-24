@@ -108,10 +108,10 @@ export default function Page() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: newDoctor.username,  // <- Changed from newDoctor.name
+                    username: newDoctor.username,
                     password: newDoctor.password,
                     role: 'doctor',
-                    branch: newDoctor.branch  // <- Added branch
+                    branch: newDoctor.branch
                 })
             })
 
@@ -133,6 +133,8 @@ export default function Page() {
     const handleEditDoctor = async (updatedDoctor) => {
         try {
             const payload = {
+                username: updatedDoctor.username,
+                password: updatedDoctor.password,
                 role: 'doctor',
                 branch: updatedDoctor.branch
             }

@@ -15,6 +15,7 @@ class UserCreate(BaseModel):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    role: Optional[str] = None
     branch: Optional[str] = None
 
 class UserOut(BaseModel):
